@@ -21,7 +21,7 @@ const Transducer ultrasound_sensor = {15, 2};
 
 
 // --- Thresholds, Constants & shared variables ---
-const int DISTANCE_THRESHOLD = 25;
+const int DISTANCE_THRESHOLD = 15;
 const int NUMBER_OF_MOTOR_PINS = 4;
 
 volatile int shared_distance = 999;
