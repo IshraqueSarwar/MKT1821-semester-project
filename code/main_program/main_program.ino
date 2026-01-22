@@ -21,7 +21,7 @@ const Transducer ultrasound_sensor = {15, 2};
 
 
 // --- Thresholds, Constants & shared variables ---
-const int DISTANCE_THRESHOLD = 15;
+const int DISTANCE_THRESHOLD = 20;
 const int NUMBER_OF_MOTOR_PINS = 4;
 
 volatile int shared_distance = 999;
@@ -29,11 +29,14 @@ volatile bool pause_backgound_sensing = false;
 
 // --- Settings ---
 const int motor_speed_while_turning = 100; // range of speed(0-255)
-const int motor_speed_while_moving = 70; // range of speed(0-255)
+const int motor_speed_while_moving = 85; // range of speed(0-255)
+const int min_startup_speed = 40;
 const int rotation_time = 300; // in millisecond
 const int pause_time = 2000; // time the bot pauses between turns(in milliseconds)
 const int pwm_freq = 5000; // 5kHz
 const int pwm_resolution = 8; // 8-bits resolution(0-255)
+const int ramp_delay = 5; // 5 ms delay between ramping up the speed
+const int turn_speed_delta = 2; // speed ramp up delta
 
 
 // --- Function Prototypes --- 
@@ -46,6 +49,7 @@ void stop_motors();
 int read_distance();
 int read_filtered_distance();
 void avoid_obstacle();
+void test_turns();
 
 
 // main setup function that is called when the computer boots
@@ -73,17 +77,56 @@ void setup(){
 
 }
 
+
+// --- Shared variable for scatter protection ---
+// Place this just above void loop() or with your other global variables
+int previous_distance = 999;
+const int MAX_JUMP = 20; // If distance jumps > 20cm instantly, ignore it
+
 // the main loop function
 void loop(){
-  int distance = read_filtered_distance();
+  // 1. Get the raw filtered reading
+  int raw_distance = read_filtered_distance();
+  int effective_distance = raw_distance;
+
+  // --- REFLECTION & SCATTER GUARD ---
+  
+  // Check if we were recently close to a wall (< 25cm)
+  bool was_close = (previous_distance < 25);
+
+  // Check if the reading suddenly spiked (e.g. from 10cm to 60cm or 999)
+  // Logic: Is the new reading much larger than the old one?
+  bool sudden_spike = (raw_distance > previous_distance + MAX_JUMP);
+  // Also treat '999' as a spike if we were just close to a wall
+  if(raw_distance == 999 && was_close) sudden_spike = true;
+
+  if (was_close && sudden_spike) {
+      Serial.print("Scatter/Reflection detected! Raw: ");
+      Serial.print(raw_distance);
+      Serial.println(" -> Ignored. Using previous.");
+      
+      // Override: Trust the previous "dangerous" distance
+      effective_distance = previous_distance; 
+  } else {
+      // Normal reading: update history (only if not 999, to keep valid history)
+      if(raw_distance != 999) {
+        previous_distance = raw_distance;
+      }
+  }
+  // ----------------------------------
+
   Serial.print("Distance: ");
-  Serial.print(distance);
+  Serial.print(effective_distance);
   Serial.println(" cm");
 
-  if(distance<DISTANCE_THRESHOLD && distance!=999){
+  // Use 'effective_distance' for the logic check
+  if(effective_distance < DISTANCE_THRESHOLD){
     Serial.println("obstacle");
     stop_motors();
     avoid_obstacle();
+
+    // Reset history so we don't get stuck in a loop after turning
+    previous_distance = 999; 
   }else{
     Serial.println("clear");
     move_forward();
@@ -92,6 +135,28 @@ void loop(){
   delay(100);
 }
 
+
+void test_turns(){
+  int pause_time = 500;
+
+  stop_motors();
+
+  // scan left
+  rotate_left();
+  delay(rotation_time);
+  stop_motors();
+  delay(pause_time);
+
+  rotate_right();
+  delay(rotation_time);
+  stop_motors();
+  delay(pause_time);
+  //second rotation looks to the right
+  rotate_right();
+  delay(rotation_time);
+  stop_motors();
+
+}
 
 
 // pwm_setup function configures pwm for the motors
@@ -131,22 +196,29 @@ void move_backward(){
 
 void rotate_right(){
   // front motor forward
-  ledcWrite(top_left_motor.pin_1, motor_speed_while_turning);
-  ledcWrite(top_left_motor.pin_2, 0);
+  for (int speed = min_startup_speed; speed <= motor_speed_while_turning; speed += turn_speed_delta){
+    ledcWrite(top_left_motor.pin_1, speed);
+    ledcWrite(top_left_motor.pin_2, 0);
 
-  //back motor backward
-  ledcWrite(bottom_right_motor.pin_1, 0);
-  ledcWrite(bottom_right_motor.pin_2, motor_speed_while_turning);
+    //back motor backward
+    ledcWrite(bottom_right_motor.pin_1, 0);
+    ledcWrite(bottom_right_motor.pin_2, speed);
+    // ramp up the speed gradually
+    delay(ramp_delay);
+  }
+  
 }
 
 void rotate_left(){
-   // front motor backward
-  ledcWrite(top_left_motor.pin_1, 0);
-  ledcWrite(top_left_motor.pin_2, motor_speed_while_turning);
+  for (int speed = min_startup_speed; speed <= motor_speed_while_turning; speed += turn_speed_delta){
+    // front motor backward
+    ledcWrite(top_left_motor.pin_1, 0);
+    ledcWrite(top_left_motor.pin_2, speed);
 
-  //back motor forword
-  ledcWrite(bottom_right_motor.pin_1, motor_speed_while_turning);
-  ledcWrite(bottom_right_motor.pin_2, 0);
+    //back motor forword
+    ledcWrite(bottom_right_motor.pin_1, speed);
+    ledcWrite(bottom_right_motor.pin_2, 0);
+  }
 }
 
 // function that reads the distance using ultrasound sensor
@@ -187,15 +259,16 @@ int read_filtered_distance(){
 }
 
 void avoid_obstacle(){
-  int pause_time = 200;
+  int pause_time = 500;
   Serial.println("Engaging in avoidance maneuver");
 
   // safety backup
   stop_motors();
-  delay(200);
+  delay(700);
   move_backward();
-  delay(300);
+  delay(500);
   stop_motors();
+  delay(500);
 
   // scan left
   rotate_left();
