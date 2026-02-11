@@ -39,17 +39,17 @@ The electronic system is implemented as a vertical, two‑board stack. This appr
 ### Visuals:
 
 <p align="center">
-  <img src="images/circuit.jpeg" width="600"/>
+  <img src="images/circuit.jpg" width="300"/>
 </p>
 simplified schematic that documents power rails, motor driver connections (MX1508), the ultrasonic sensor (HC‑SR04), and the ESP32 control pins.
 
 <p align="center">
-  <img src="images/stacked.jpeg" width="600"/>
+  <img src="images/stacked.jpeg" width="300"/>
 </p>
 shows the physical arrangement of the ESP32 controller, step‑down regulator, and motor driver modules mounted on two stacked perfboards.
 
 <p align="center">
-  <img src="images/unstacked.jpeg" width="600"/>
+  <img src="images/unstacked.jpeg" width="300"/>
 </p>
 shows the two layers separated for clarity (controller layer and actuator/sensor layer).
 
