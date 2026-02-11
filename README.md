@@ -31,7 +31,31 @@ This repository contains the project overview, circuit documentation, mechanical
 
 ---
 
-## 1. Electrical Circuit — Stacked Architecture
+<p align="center">
+  <img src="images/main.jpeg" width="600"/>
+</p>
+
+## 1. Mechanical Design — Chassis
+
+### Summary
+The chassis uses an overlapping motor mount concept: the drive motors are arranged so their housings partially overlap with the main body plane. This overlapping reduces overall length while preserving wheelbase and turning capability. The main chassis was modeled parametrically in SolidWorks and exported as manufacturing drawings.
+
+<p align="center">
+  <img src="images/chassis.JPG" width="600"/>
+</p>
+
+### Drawings & CAD:
+- Chassis technical drawing: detailed, dimensioned views and an isometric illustration of the assembly.
+- Project poster (overview): high‑level poster showing system architecture, workflow, and rendered isometrics.
+
+### Mechanical considerations
+- Kinematic smoothness: the geometry was tuned to keep wheel contact and minimize sudden shifts during turning maneuvers.
+- Traction & interface: traction surfaces were optimized during prototyping; the final design uses uniform adhesive strips to stabilize wheel grip without increasing slip.
+- Assembly & serviceability: the chassis allows the stacked electronics to slide in/out of a slot for quick access to the controller and power modules.
+
+---
+
+## 2. Electrical Circuit — Stacked Architecture
 
 ### Summary
 The electronic system is implemented as a vertical, two‑board stack. This approach concentrates motors, battery management, power conversion, and sensing into a compact column, dramatically reducing the vehicle's footprint while keeping wiring short to lower noise and latency.
@@ -39,7 +63,7 @@ The electronic system is implemented as a vertical, two‑board stack. This appr
 ### Visuals:
 
 <p align="center">
-  <img src="images/circuit.jpg" width="300"/>
+  <img src="images/circuit.jpg" width="600"/>
 </p>
 simplified schematic that documents power rails, motor driver connections (MX1508), the ultrasonic sensor (HC‑SR04), and the ESP32 control pins.
 
