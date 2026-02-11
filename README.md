@@ -15,7 +15,7 @@
 
 ## Project Overview
 
-is a compact, size‑optimized obstacle‑avoidance car designed as a CAD course capstone. The project emphasizes volumetric efficiency: a stacked, two‑layer electronic architecture and an overlapping motor/chassis arrangement reduce footprint while keeping components serviceable and mechanically robust. The mechanical structure was modeled and dimensioned in SolidWorks, and the electronics were implemented on a two‑layer perfboard stack to prioritize signal integrity and compactness.
+It is a compact, size‑optimized obstacle‑avoidance car designed as a MEchatronics course capstone. The project emphasizes volumetric efficiency: a stacked, two‑layer electronic architecture and an overlapping motor/chassis arrangement reduce footprint while keeping components serviceable and mechanically robust. The mechanical structure was modeled and dimensioned in SolidWorks, and the electronics were implemented on a two‑layer perfboard stack to prioritize signal integrity and compactness.
 
 This repository contains the project overview, circuit documentation, mechanical CAD deliverables, and a clear description of the onboard algorithm used for autonomous navigation.
 
