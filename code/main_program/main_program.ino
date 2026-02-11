@@ -73,7 +73,7 @@ void setup(){
   Serial.println("Core computer: ESP32");
   Serial.println("Program by: MrRobot");
   Serial.println("-------------------------");
-  delay(2000); // start scanning and all that fun stuff after 2 seconds of initalization.
+  delay(2000); 
 
 }
 
@@ -94,10 +94,8 @@ void loop(){
   // Check if we were recently close to a wall (< 25cm)
   bool was_close = (previous_distance < 25);
 
-  // Check if the reading suddenly spiked (e.g. from 10cm to 60cm or 999)
-  // Logic: Is the new reading much larger than the old one?
+ 
   bool sudden_spike = (raw_distance > previous_distance + MAX_JUMP);
-  // Also treat '999' as a spike if we were just close to a wall
   if(raw_distance == 999 && was_close) sudden_spike = true;
 
   if (was_close && sudden_spike) {
@@ -108,7 +106,7 @@ void loop(){
       // Override: Trust the previous "dangerous" distance
       effective_distance = previous_distance; 
   } else {
-      // Normal reading: update history (only if not 999, to keep valid history)
+      
       if(raw_distance != 999) {
         previous_distance = raw_distance;
       }
