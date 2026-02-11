@@ -22,7 +22,7 @@ This repository contains the project overview, circuit documentation, mechanical
 
 ## 🎥 Project Demonstration
 <p align="center">
-  <img src="demo.gif" width="500">
+  <img src="images/demo.gif" width="500">
 </p>
 
 
