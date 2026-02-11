@@ -19,6 +19,14 @@ is a compact, size‑optimized obstacle‑avoidance car designed as a CAD course
 
 This repository contains the project overview, circuit documentation, mechanical CAD deliverables, and a clear description of the onboard algorithm used for autonomous navigation.
 
+
+## 🎥 Project Demonstration
+<p align="center">
+  <img src="demo.gif" width="500">
+</p>
+
+
+
 ---
 
 ## Highlights
