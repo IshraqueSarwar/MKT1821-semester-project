@@ -32,7 +32,7 @@ This repository contains the project overview, circuit documentation, mechanical
 ---
 
 <p align="center">
-  <img src="images/main.jpeg" width="600"/>
+  <img src="images/main.jpeg" width="300"/>
 </p>
 
 ## 1. Mechanical Design — Chassis
@@ -77,3 +77,29 @@ shows the physical arrangement of the ESP32 controller, step‑down regulator, a
 </p>
 shows the two layers separated for clarity (controller layer and actuator/sensor layer).
 
+---
+
+## 3. Algorithm — Autonomous Control Logic
+
+### Summary
+The control algorithm implements a low‑compute, reliable avoidance strategy designed for single ultrasonic sensor hardware constraints. It uses a simple Scan & Pivot method: when an obstacle is detected within a safety threshold, the vehicle samples left and right clearance and selects the direction with greater free space.
+
+### Flowchart:
+<p align="center">
+  <img src="images/algorithm.png" width="600"/>
+</p>
+
+### Algorithm (stepwise)
+1. Distance Acquisition (Sensor Core): the ultrasonic sensor is triggered and the echo time is measured. The measured distance is stored in a global variable accessible to the actuator core.
+2. Actuator Control (Actuator Core): the actuator routine polls the global distance variable at a fixed control rate and decides navigation commands.
+3. Threshold check: if measured distance ≤ 20 cm, the avoidance routine is triggered. Otherwise the vehicle proceeds with forward motion.
+4. Scan & Pivot sequence:
+- Pivot the vehicle in place toward one side (e.g., right) and sample the distance.
+- Return to center, pivot the opposite side (left) and sample the distance.
+- Compare left and right distances.
+- Select the direction with greater clearance and execute a predefined turning maneuver to re‑align the vehicle with its primary navigation objective.
+Resume forward motion once the path ahead is clear.
+
+### Implementation notes: 
+- The control loop is split conceptually into two cores (sensor acquisition and actuation) to mimic RTOS‑style separation and keep latency low.
+- The algorithm prioritizes simplicity and determinism to work on low‑power microcontrollers (ESP32) and under stochastic obstacle distributions.
