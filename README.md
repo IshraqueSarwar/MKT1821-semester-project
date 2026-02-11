@@ -86,7 +86,7 @@ The control algorithm implements a low‑compute, reliable avoidance strategy de
 
 ### Flowchart:
 <p align="center">
-  <img src="images/algorithm.png" width="600"/>
+  <img src="images/algorithm.jpg" width="600"/>
 </p>
 
 ### Algorithm (stepwise)
@@ -94,11 +94,11 @@ The control algorithm implements a low‑compute, reliable avoidance strategy de
 2. Actuator Control (Actuator Core): the actuator routine polls the global distance variable at a fixed control rate and decides navigation commands.
 3. Threshold check: if measured distance ≤ 20 cm, the avoidance routine is triggered. Otherwise the vehicle proceeds with forward motion.
 4. Scan & Pivot sequence:
-- Pivot the vehicle in place toward one side (e.g., right) and sample the distance.
-- Return to center, pivot the opposite side (left) and sample the distance.
-- Compare left and right distances.
-- Select the direction with greater clearance and execute a predefined turning maneuver to re‑align the vehicle with its primary navigation objective.
-Resume forward motion once the path ahead is clear.
+	- Pivot the vehicle in place toward one side (e.g., right) and sample the distance.
+	- Return to center, pivot the opposite side (left) and sample the distance.
+	- Compare left and right distances.
+	- Select the direction with greater clearance and execute a predefined turning maneuver to re‑align the vehicle with its primary navigation objective.
+	Resume forward motion once the path ahead is clear.
 
 ### Implementation notes: 
 - The control loop is split conceptually into two cores (sensor acquisition and actuation) to mimic RTOS‑style separation and keep latency low.
