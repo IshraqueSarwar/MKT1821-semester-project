@@ -109,5 +109,5 @@ The control algorithm implements a low‑compute, reliable avoidance strategy de
 	Resume forward motion once the path ahead is clear.
 
 ### Implementation notes: 
-- The control loop is split conceptually into two cores (sensor acquisition and actuation) to mimic RTOS‑style separation and keep latency low.
+- The control loop is split into two cores (sensor acquisition and actuation) to take advantage of the RTOS separation (using the two esp cores, one of the reasons for selecting esp microcontroller) and keep latency low.
 - The algorithm prioritizes simplicity and determinism to work on low‑power microcontrollers (ESP32) and under stochastic obstacle distributions.
